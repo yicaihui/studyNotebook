@@ -1,3 +1,10 @@
+# prim 算法
+# 无向有权图，解决最小生成树问题
+# 找到距离最小生成树的最短距离，更新距离
+
+# dijkastra 算法
+# 有向有权图，解决最短路径问题
+# 找到距离源点的最短距离，更新距离
 def main():
     N,M = map(int,input().split())
     grid = [[float('inf')] * (N + 1) for _ in range(N + 1)]
