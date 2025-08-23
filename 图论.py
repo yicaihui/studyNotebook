@@ -85,62 +85,74 @@ def main():
     else:
         print(mindists[N])
 
-# bellman ford算法
+# bellman ford算法 + 判断负权回路
 def main():
     n,m = map(int,input().split())
     edges = []
     for _ in range(m):
-        s,e,val = map(int,input().split())
-        edges.append([s,e,val])
-
-    mindist = [float('inf')] * (n + 1)
-    mindist[1] = 0
-    
-    for _ in range(n - 1):
+        s,t,v = map(int,input().split())
+        edges.append([s,t,v])
+ 
+    mindists = [float('inf')] * (n + 1)
+    flag = False
+ 
+    mindists[1] = 0
+ 
+    for i in range(1,n + 1):
         update = False
-        for s,e,val in edges:
-            if mindist[s] != float('inf') and mindist[e] > mindist[s] + val:
+        for s,t,v in edges:
+            if mindists[s] != float('inf') and mindists[t] > mindists[s] + v:
+                mindists[t] = mindists[s] + v
                 update = True
-                mindist[e] = mindist[s] + val
-
-        if not update:
+        if i == n and update:
+            flag = True
+        elif i != n and not update:
             break
-    
-    if mindist[n] == float('inf'):
+ 
+    if flag:
+        print('circle')
+    elif mindists[n] == float('inf'):
         print('unconnected')
     else:
-        print(mindist[n])
+        print(mindists[n])
 
 # SPFA 算法
 from collections import defaultdict
-
 def main():
     n,m = map(int,input().split())
     mapper = defaultdict(list)
     for _ in range(m):
-        s,e,val = map(int,input().split())
-        mapper[s].append([e,val])
-
-    # 记录最小距离
-    mindist = [float('inf')] * (n + 1)
-    # 记录是否已经在队列里，不需要重复添加
+        s,t,v = map(int,input().split())
+        mapper[s].append([t,v])
+ 
+    mindists = [float('inf')] * (n + 1)
     visited = [False] * (n + 1)
+    counts = [0] * (n + 1)
     queue = []
-    mindist[1] = 0
-    queue.append(1)
+    flag = False
+ 
+    mindists[1] = 0
     visited[1] = True
-    
+    queue.append(1)
+ 
     while queue:
-        cur = queue.pop(0)
-        visited[cur] = False
-        for e,val in mapper[cur]:
-            if mindist[e] > mindist[cur] + val:
-                mindist[e] = mindist[cur] + val
-                if not visited[e]:
-                    visited[e] = True
-                    queue.append(e)
-    
-    if mindist[n] == float('inf'):
+        s = queue.pop(0)
+        visited[s] = False
+        for t,v in mapper[s]:
+            if mindists[t] > mindists[s] + v:
+                mindists[t] = mindists[s] + v
+                if not visited[t]:
+                    visited[t] = True
+                    queue.append(t)
+                    counts[t] += 1
+                    if counts[t] == n:
+                        flag = True
+        if flag:
+            break
+ 
+    if flag:
+        print('circle')
+    elif mindists[n] == float('inf'):
         print('unconnected')
     else:
-        print(mindist[n])
+        print(mindists[n])
