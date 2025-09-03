@@ -156,3 +156,59 @@ def main():
         print('unconnected')
     else:
         print(mindists[n])
+# Bellman_ford算法 + 有限次数求最短路径
+def main():
+    n,m = map(int,input().split())
+    edges = []
+    for _ in range(m):
+        s,t,v = map(int,input().split())
+        edges.append([s,t,v])
+    src,dst,k = map(int,input().split())
+
+    mindists = [float('inf')] * (n + 1)
+    mindists[src] = 0
+
+    for _ in range(k + 1):
+        # 有限次数求最短路（Bellman-Ford） → 必须用「上一轮结果」，保持路径长度控制
+        mindists_copy = mindists.copy()
+        for s,t,v in edges:
+            if mindists_copy[s] != float('inf') and mindists_copy[s] + v < mindists[t]:
+                mindists[t] = mindists_copy[s] + v
+    
+    if mindists[dst] == float('inf'):
+        print('unreachable')
+    else:
+        print(mindists[dst])
+        
+# SPFA算法 + 有限次数求最短路径
+from collections import defaultdict
+
+def main():
+    n,m = map(int,input().split())
+    mapper = defaultdict(list)
+    for _ in range(m):
+        s,t,v = map(int,input().split())
+        mapper[s].append([t,v])
+    src,dst,k = map(int,input().split())
+
+    mindists = [float('inf')] * (n + 1)
+    mindists[src] = 0
+    queue = [src]
+
+    for _ in range(k + 1):
+        _queue = []
+        _mindists = mindists.copy()
+        for s in queue:
+            for t,v in mapper[s]:
+                if mindists[t] > _mindists[s] + v:
+                    mindists[t] = _mindists[s] + v
+                    if t not in _queue:
+                        _queue.append(t)
+        queue = _queue
+        if queue.count == 0:
+            break
+    
+    if mindists[dst] == float('inf'):
+        print('unreachable')
+    else:
+        print(mindists[dst])
